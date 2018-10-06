@@ -27,19 +27,30 @@ class Game:
         batt = batter._batt
         n = 1
         while self.out_judgement():
-            print('{}球目投げた!'.format(n))
+            count = self.count()
+            print(count)
+            print('          {}球目投げた!'.format(n))
             thrown = self.nageta(ball)
             swing = self.hutta(batt)
-            if thrown > swing:
-                print('Strike!')
-                self._strike += 1
-                n+=1
-            else:
-                print('Hit!')
+            if self.hantei(thrown, swing)=='Hit!':
                 break
+            n+=1
+    
+    def count(self):
+        ballcount = 'ball  : ' + str('*')*self._ball
+        strikecount = 'strike: ' + str('*')*self._strike
+        outcount = 'out   : ' + str('*')*self._out
+        count = '\n'.join([ballcount, strikecount, outcount])
+        return count
                             
     def out_judgement(self):
-        if self._strike >= 3:
+        if (self._strike >= 3):
+            print('          Batter Out!')
+            print('          Pitcherの勝ち!')
+            return False
+        elif (self._ball >= 4):
+            print('          Four Ball!')
+            print('          Batterの勝ち!')
             return False
         return True
     
@@ -49,9 +60,22 @@ class Game:
 
     def hutta(self, batt):
         swing = batt[0] + random.randint(-1*batt[2], batt[2])
-        return swing            
+        return swing
+
+    def hantei(self, thrown, swing):
+        if thrown > swing:
+            if thrown > 5:
+                print('          Strike!')
+                self._strike += 1
+            else:
+                print('          Ball!')
+                self._ball += 1
+        else:
+            print('          Hit!')
+            print('          Batterの勝ち!')
+            return 'Hit!'
 
 if __name__ == "__main__":
     pitcher_otani = Pitcher(controll=5, speed=160, flactu=5)
-    batter_otani = Batter(meet=5, power=8, flactu=5)
+    batter_otani = Batter(meet=2, power=8, flactu=5)
     Game(pitcher_otani, batter_otani)
